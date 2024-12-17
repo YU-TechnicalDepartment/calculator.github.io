@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>電卓アプリ</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f7f7f7;
+            margin: 0;
+        }
+        .calculator {
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+            width: 350px;
+        }
+        .display {
+            background-color: #333;
+            color: white;
+            padding: 20px;
+            font-size: 32px;
+            text-align: right;
+            border: none;
+            outline: none;
+            width: 100%;
+            box-sizing: border-box;
+        }
+        .buttons {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px; /* ボタン間の間隔を広く */
+            padding: 10px;
+        }
+        .button {
+            background-color: #26A79A;
+            border: none;
+            color: white;
+            font-size: 24px;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        .button:hover {
+            background-color: #239087;
+        }
+        .button:active {
+            background-color: #1e776d;
+        }
+        .button.wide {
+            grid-column: span 2;
+        }
+        .button.operator {
+            background-color: #F7B731;
+        }
+        .button.operator:hover {
+            background-color: #F39C12;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="calculator">
+        <input type="text" class="display" id="display" readonly>
+        <div class="buttons">
+            <button class="button" onclick="appendNumber('7')">7</button>
+            <button class="button" onclick="appendNumber('8')">8</button>
+            <button class="button" onclick="appendNumber('9')">9</button>
+            <button class="button operator" onclick="chooseOperation('/')">÷</button>
+            <button class="button" onclick="appendNumber('4')">4</button>
+            <button class="button" onclick="appendNumber('5')">5</button>
+            <button class="button" onclick="appendNumber('6')">6</button>
+            <button class="button operator" onclick="chooseOperation('*')">×</button>
+            <button class="button" onclick="appendNumber('1')">1</button>
+            <button class="button" onclick="appendNumber('2')">2</button>
+            <button class="button" onclick="appendNumber('3')">3</button>
+            <button class="button operator" onclick="chooseOperation('-')">−</button>
+            <button class="button wide" onclick="appendNumber('0')">0</button>
+            <button class="button" onclick="appendNumber('.')">.</button>
+            <button class="button operator" onclick="chooseOperation('+')">+</button>
+            <button class="button wide" onclick="clearDisplay()">C</button>
+            <button class="button wide operator" onclick="compute()">=</button>
+        </div>
+    </div>
+
+    <script>
+        let currentOperand = '';
+        let previousOperand = '';
+        let operation = undefined;
+
+        function appendNumber(number) {
+            if (number === '.' && currentOperand.includes('.')) return;
+            currentOperand = currentOperand.toString() + number.toString();
+            updateDisplay();
+        }
+
+        function chooseOperation(op) {
+            if (currentOperand === '') return;
+            if (previousOperand !== '') {
+                compute();
+            }
+            operation = op;
+            currentOperand += ` ${op} `;
+            updateDisplay();
+        }
+
+        function compute() {
+            let computation;
+            const parts = currentOperand.split(' ');
+            if (parts.length < 3) return;
+            const prev = parseFloat(parts[0]);
+            const current = parseFloat(parts[2]);
+            const op = parts[1];
+
+            if (isNaN(prev) || isNaN(current)) return;
+            switch (op) {
+                case '+':
+                    computation = prev + current;
+                    break;
+                case '-':
+                    computation = prev - current;
+                    break;
+                case '*':
+                    computation = prev * current;
+                    break;
+                case '/':
+                    computation = prev / current;
+                    break;
+                default:
+                    return;
+            }
+            currentOperand = computation.toString();
+            operation = undefined;
+            updateDisplay();
+        }
+
+        function clearDisplay() {
+            currentOperand = '';
+            previousOperand = '';
+            operation = undefined;
+            updateDisplay();
+        }
+
+        function updateDisplay() {
+            document.getElementById('display').value = currentOperand;
+        }
+    </script>
+
+</body>
+</html>
